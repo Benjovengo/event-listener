@@ -28,7 +28,7 @@ const GetContract = () => {
     // Javascript "version" of the smart contracts
     helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
     newMessage = await helloWorld.message();
-    console.log(newMessage)
+    //console.log(newMessage)
     setNewMessage(newMessage)
 
     window.ethereum.on('accountsChanged', async () => {
@@ -40,8 +40,8 @@ const GetContract = () => {
 
   /* ===================== useEffect ===================== */
   useEffect(() => {
-    loadBlockchainData();
     addSmartContractListener();
+    loadBlockchainData();
     if (update) {
       updateMessage();
       update = false
@@ -50,11 +50,16 @@ const GetContract = () => {
 
 
   const addSmartContractListener = async () => {
+    provider = new ethers.providers.Web3Provider(window.ethereum)
+    setProvider(provider)
     const network = await provider.getNetwork()
     const signer = provider.getSigner();
     helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
-    helloWorld.on("UpdatedMessages", (from, to, value, event)=>{
-      console.log(value)
+    helloWorld.on("UpdatedMessages", (old, data)=>{
+      if (typeof old !== 'undefined') {
+        console.log(old, data)
+      }
+      
     })
   }
 
@@ -62,7 +67,7 @@ const GetContract = () => {
     const network = await provider.getNetwork()
     const signer = provider.getSigner();
     helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
-    await helloWorld.update('Fabio')
+    await helloWorld.update('Message')
   }
 
 

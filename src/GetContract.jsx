@@ -1,38 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 
-/* Contract */
 import HelloWorld from './abis/HelloWorld.json'
 import config from './config.json'; // config
 
-let provider = new ethers.providers.Web3Provider(window.ethereum, "any")
-const network = await provider.getNetwork()
-
-// get accounts
-const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-//console.log(accounts[0])
-
-// get signer
-const signer = provider.getSigner();
-
-// Javascript "version" of the smart contracts
-const helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
-const message = await helloWorld.message();
-console.log(message)
-    
 
 const GetContract = () => {
-  //const [newMessage, setNewMessage] = useState("");
+  let [newMessage, setNewMessage] = useState("");
+  let [account, setAccount] = useState(null)
+  let [provider, setProvider] = useState(null)
+
 
   const loadBlockchainData = async () => {
-    let newMessage = 'Fabio';
-    console.log(newMessage)
+    provider = new ethers.providers.Web3Provider(window.ethereum)
+    const network = await provider.getNetwork()
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    setAccount(accounts[0])
+
+    const signer = provider.getSigner();
+
+    // Javascript "version" of the smart contracts
+    const helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
+    newMessage = await helloWorld.message();
+    setNewMessage(newMessage)
+
+    window.ethereum.on('accountsChanged', async () => {
+      accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      account = ethers.utils.getAddress(accounts[0])
+      setAccount(account);
+    })
   }
 
-  //called only once
-  useEffect(async () => {
-    loadBlockchainData();
-  });
+  useEffect(() => {
+    loadBlockchainData()
+    console.log(newMessage)
+  }, [])
 
 
 

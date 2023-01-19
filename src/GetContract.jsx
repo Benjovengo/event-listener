@@ -7,12 +7,17 @@ import config from './config.json'; // config
 
 const GetContract = () => {
   let [newMessage, setNewMessage] = useState("");
+  let [message, setMessage] = useState("");
   let [account, setAccount] = useState(null)
   let [provider, setProvider] = useState(null)
+  const [status, setStatus] = useState("");
+
+  let helloWorld
 
 
   const loadBlockchainData = async () => {
     provider = new ethers.providers.Web3Provider(window.ethereum)
+    setProvider(provider)
     const network = await provider.getNetwork()
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
     setAccount(accounts[0])
@@ -20,8 +25,9 @@ const GetContract = () => {
     const signer = provider.getSigner();
 
     // Javascript "version" of the smart contracts
-    const helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
+    helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
     newMessage = await helloWorld.message();
+    console.log(newMessage)
     setNewMessage(newMessage)
 
     window.ethereum.on('accountsChanged', async () => {
@@ -31,11 +37,29 @@ const GetContract = () => {
     })
   }
 
+  /* ===================== useEffect ===================== */
   useEffect(() => {
-    loadBlockchainData()
-    console.log(newMessage)
+    loadBlockchainData();
+    //addSmartContractListener();
+    updateMessage();
   }, [])
 
+
+/*   const addSmartContractListener = async () => {
+    const network = await provider.getNetwork()
+    const signer = provider.getSigner();
+    helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
+    helloWorld.on("UpdatedMessages", (from, to, value, event)=>{
+      console.log(value)
+    })
+  } */
+
+  const updateMessage = async () => {
+    const network = await provider.getNetwork()
+    const signer = provider.getSigner();
+    helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
+    helloWorld.update('Fabio')
+  }
 
 
   return (

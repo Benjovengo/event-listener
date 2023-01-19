@@ -37,9 +37,8 @@ const GetContract = () => {
     })
   }
 
-  /* ===================== useEffect ===================== */
   useEffect(() => {
-    addSmartContractListener();
+    //addSmartContractListener();
     loadBlockchainData();
     if (update) {
       updateMessage('Debug');
@@ -54,12 +53,13 @@ const GetContract = () => {
     const network = await provider.getNetwork()
     const signer = provider.getSigner();
     contract = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
-    contract.on("UpdatedMessages", (old, data)=>{
-      if (typeof old !== 'undefined') {
-        console.log(old, data)
-      }
-      
-    })
+    provider.once("block", () => {
+      contract.on("UpdatedMessages", (old, data)=>{
+        if (typeof old !== 'undefined') {
+          console.log(old, data)
+        }
+      })
+  })
   }
 
   const updateMessage = async (_text) => {

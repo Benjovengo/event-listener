@@ -26,7 +26,7 @@ function createABIFiles() {
   let jsonData = JSON.parse(jsonFile);
   let stringfyData = JSON.stringify(jsonData.abi, null, " ")
 
-  let abiFilePath = "./abis/HelloWorld.json"
+  let abiFilePath = "./src/abis/HelloWorld.json"
   //writeData('../client/src/abis/FashionToken.sol', attribute)
   writeABIs(abiFilePath, stringfyData)
 
@@ -44,7 +44,7 @@ function writeABIs(_destination, _data) {
 }
 // Function to create/ update config.json file
 function createConfigJSON(_helloWorldAddress) {
-  const configFilePath = "./config.json";
+  const configFilePath = "./src/config.json";
 
   // Create data JSON with contents
   var data = {}

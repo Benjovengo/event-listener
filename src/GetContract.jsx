@@ -6,9 +6,6 @@ import config from './config.json'; // config
 
 
 const GetContract = () => {
-  //let [newMessage, setNewMessage] = useState("");
-  let [message, setMessage] = useState("");
-  let [account, setAccount] = useState(null)
   let [provider, setProvider] = useState(null)
   let [contract, setContract] = useState("");
   let [network, setNetwork] = useState("");

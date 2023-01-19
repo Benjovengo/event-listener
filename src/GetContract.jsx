@@ -6,7 +6,7 @@ import config from './config.json'; // config
 
 
 const GetContract = () => {
-  let [newMessage, setNewMessage] = useState("");
+  //let [newMessage, setNewMessage] = useState("");
   let [message, setMessage] = useState("");
   let [account, setAccount] = useState(null)
   let [provider, setProvider] = useState(null)
@@ -51,9 +51,9 @@ const GetContract = () => {
   const addSmartContractListener = async () => {
     //provider = new ethers.providers.Web3Provider(window.ethereum)
     //setProvider(provider)
-    //const network = await provider.getNetwork()
-    //const signer = provider.getSigner();
-    //helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
+    const network = await provider.getNetwork()
+    const signer = provider.getSigner();
+    contract = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
     contract.on("UpdatedMessages", (old, data)=>{
       if (typeof old !== 'undefined') {
         console.log(old, data)

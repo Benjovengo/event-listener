@@ -10,9 +10,9 @@ const GetContract = () => {
   let [message, setMessage] = useState("");
   let [account, setAccount] = useState(null)
   let [provider, setProvider] = useState(null)
-  const [status, setStatus] = useState("");
+  let [contract, setContract] = useState("");
 
-  let helloWorld
+
   let update = true
 
 
@@ -26,10 +26,9 @@ const GetContract = () => {
     const signer = provider.getSigner();
 
     // Javascript "version" of the smart contracts
-    helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
-    newMessage = await helloWorld.message();
-    //console.log(newMessage)
-    setNewMessage(newMessage)
+    contract = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
+    setContract(contract)
+
 
     window.ethereum.on('accountsChanged', async () => {
       accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -43,19 +42,19 @@ const GetContract = () => {
     addSmartContractListener();
     loadBlockchainData();
     if (update) {
-      updateMessage();
+      updateMessage('Debug');
       update = false
     }
   }, [])
 
 
   const addSmartContractListener = async () => {
-    provider = new ethers.providers.Web3Provider(window.ethereum)
-    setProvider(provider)
-    const network = await provider.getNetwork()
-    const signer = provider.getSigner();
-    helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
-    helloWorld.on("UpdatedMessages", (old, data)=>{
+    //provider = new ethers.providers.Web3Provider(window.ethereum)
+    //setProvider(provider)
+    //const network = await provider.getNetwork()
+    //const signer = provider.getSigner();
+    //helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
+    contract.on("UpdatedMessages", (old, data)=>{
       if (typeof old !== 'undefined') {
         console.log(old, data)
       }
@@ -63,16 +62,19 @@ const GetContract = () => {
     })
   }
 
-  const updateMessage = async () => {
-    const network = await provider.getNetwork()
-    const signer = provider.getSigner();
-    helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
-    await helloWorld.update('Message')
+  const updateMessage = async (_text) => {
+    //const network = await provider.getNetwork()
+    //const signer = provider.getSigner();
+    //helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
+    await contract.update(_text)
   }
 
 
   return (
-    <div>HelloWorld</div>
+    <>
+      <div>HelloWorld</div>
+      <button onClick={()=> updateMessage('Test')}>Click me</button>
+    </>
   )
 }
 

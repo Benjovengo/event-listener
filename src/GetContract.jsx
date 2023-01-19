@@ -13,6 +13,7 @@ const GetContract = () => {
   const [status, setStatus] = useState("");
 
   let helloWorld
+  let update = true
 
 
   const loadBlockchainData = async () => {
@@ -40,25 +41,28 @@ const GetContract = () => {
   /* ===================== useEffect ===================== */
   useEffect(() => {
     loadBlockchainData();
-    //addSmartContractListener();
-    updateMessage();
+    addSmartContractListener();
+    if (update) {
+      updateMessage();
+      update = false
+    }
   }, [])
 
 
-/*   const addSmartContractListener = async () => {
+  const addSmartContractListener = async () => {
     const network = await provider.getNetwork()
     const signer = provider.getSigner();
     helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
     helloWorld.on("UpdatedMessages", (from, to, value, event)=>{
       console.log(value)
     })
-  } */
+  }
 
   const updateMessage = async () => {
     const network = await provider.getNetwork()
     const signer = provider.getSigner();
     helloWorld = new ethers.Contract(config[network.chainId].helloWorld.address, HelloWorld, signer)
-    helloWorld.update('Fabio')
+    await helloWorld.update('Fabio')
   }
 
 

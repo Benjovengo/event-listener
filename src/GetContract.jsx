@@ -31,7 +31,7 @@ const GetContract = () => {
   const addSmartContractListener = async () => {
     if (network) {
       provider.once("block", () => {
-        contract.on("UpdatedMessages", (old, data)=>{
+        contract.once("UpdatedMessages", (old, data)=>{
           console.log(old, data)
         })
       })
@@ -39,6 +39,7 @@ const GetContract = () => {
   }
 
   useEffect(() => {
+    loadBlockchainData();
     addSmartContractListener();
     loadBlockchainData();
   }, [])
